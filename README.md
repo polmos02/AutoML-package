@@ -16,9 +16,11 @@ Klasyfkacja binarna
 - Potrzebujemy dużą precision bo lepiej powiedzieć że grzyb jest niejadalny (1- jadalny)
 
 3. Ewaluacja i podsumowanie wyników:
-- Można w 2 wybierać na podstawie wyników kilku miar i wtedy wyświetlić tu te wszystkie 
+- Można w 2 wybierać na podstawie wyników kilku miar i wtedy wyświetlić tu te wszystkie
 - Roc auc plot 
-- Funkcje które generują wykresy i pomysły na wykresy 
+- Funkcje które generują wykresy i pomysły na wykresy (bar plot wyników miary z kroswalidacji, żeby oceniać stabilność, bar ploty jakichś najważniejszych miar)
+- dodac jakies korelacje miar między algorytmami - żeby zobaczyć które modele mają podobne wyniki różnych miar - jak użytkownikowi będzie zależało najbardziej np na precyzji to bedzie mozna tego modelu użyć?
+- cos z tym balansowanuem
 Wnioski z accuracy, sensivity, recall I precission połączone ze zbalansowaniem zbioru np
 
 # Datasets
