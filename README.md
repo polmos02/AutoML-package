@@ -1,5 +1,6 @@
 # AutoML-package
-RANDOM STATE = 42
+RANDOM STATE = 10
+
 Klasyfkacja binarna
 
 1. Preprocessing:
@@ -38,7 +39,7 @@ AutoML will ensemble available models
 - model comparison miay - opcjonalne
 Wnioski z accuracy, sensivity, recall I precission połączone ze zbalansowaniem zbioru np
 
-# Datasets
+# Datasets 1,2,4
 https://www.kaggle.com/datasets/prishasawhney/mushroom-dataset
 https://www.kaggle.com/datasets/devzohaib/mushroom-edibility-classification
 https://www.kaggle.com/datasets/ulrikthygepedersen/mushroom-attributes
