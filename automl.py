@@ -26,7 +26,7 @@ class AutoML:
         return self.best_model
 
     def get_best_score(self):
-        if not self.best_score_:
+        if not self.best_score:
             raise Exception("Model is not trained yet. Call fit() before get_best_score().")
         return self.best_score
 
@@ -59,7 +59,7 @@ class AutoML:
             X_test_preprocessed = prep(X_test, mode='test', features=self.selected_features)
 
             # model selection
-            self.best_model, self.best_score_ = model_selection(X_train_preprocessed, y_train)
+            self.best_model, self.best_score = model_selection(X_train_preprocessed, y_train)
             if self.best_model is None:
                 raise ValueError("Model selection failed. No model was returned.")
 
@@ -68,8 +68,6 @@ class AutoML:
             self.metrics = model_evaluation(y_test, y_pred)
 
             self.fit_time = time.time() - start_time
-
-            # return self.best_model, self.best_score_
 
 
         except Exception as e:
@@ -92,18 +90,17 @@ class AutoML:
         pass
 
 
-# # Example usage
+# Example usage
 # if __name__ == "__main__":
 #
 #     automl = AutoML()
-#
+#     import pandas as pd
 #     from sklearn.datasets import load_breast_cancer
 #     data = load_breast_cancer()
 #     X = pd.DataFrame(data.data, columns=data.feature_names)
 #     y = pd.Series(data.target, name="target")
 #
-#     best_model, accuracy = automl.fit(X, y)
-#     print(f"Best Model: {best_model}")
+#     automl.fit(X, y)
 #
 #     y_pred = automl.predict(X)
 #     print(f"Predictions: {y_pred}")
@@ -113,4 +110,7 @@ class AutoML:
 #
 #     fit_time = automl.get_fit_time()
 #     print(f"Fit time: {fit_time} seconds")
+#
+#     print(automl.get_best_model())
+#     print(automl.get_best_score())
 

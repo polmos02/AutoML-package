@@ -3,9 +3,21 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import VotingClassifier
-
+from scipy.stats import randint, uniform
 import json
 import importlib
+
+def parse_params(param_dict):
+    parsed_params = {}
+    for param, config in param_dict.items():
+        if isinstance(config, dict):
+            if config['type'] == 'randint':
+                parsed_params[param] = randint(config['low'], config['high'])
+            elif config['type'] == 'uniform':
+                parsed_params[param] = uniform(config['low'], config['high'])
+        elif isinstance(config, list):
+            parsed_params[param] = [None if v == 'null' else v for v in config]
+    return parsed_params
 
 def load_models():
     # load models from JSON file
@@ -19,9 +31,11 @@ def load_models():
         module = importlib.import_module(model_info['module'])
         model_class = getattr(module, model_info['name'])
 
+        parsed_params = parse_params(model_info['params'])
+
         models[model_info['name']] = {
             'model': model_class,
-            'params': model_info['params']
+            'params': parsed_params
         }
 
     return models
@@ -102,15 +116,14 @@ def model_selection(X_train, y_train):
 
         models_list.append((model_info['model'].__name__, rs_best_model))
 
-    ensemble_model = VotingClassifier(estimators=models_list, voting='soft', n_jobs=-1)
+    ensemble_model = VotingClassifier(estimators=models_list, voting='hard', n_jobs=-1)
     ensemble_model.fit(X_train, y_train)
 
-    ensemble_score = custom_score(y_train, ensemble_model.predict(X_train))
+    y_pred_ens = ensemble_model.predict(X_train)
+    ensemble_score = custom_score(y_train, y_pred_ens)
 
     if ensemble_score > best_score:
         best_model = ensemble_model
         best_score = ensemble_score
 
     return best_model, best_score
-
-
