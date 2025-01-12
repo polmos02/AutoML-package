@@ -134,21 +134,23 @@ class AutoMushroom:
         print(
             "   Dla każdego z modeli, przy użyciu metody RandomizedSearch, dobrano najlepsze zestawy hiperparametrów.")
         print()
-        print("4. Parametry finalnego modelu:")
-        return self.best_model
-        print()
-        print(f"5. Czas trenowania modelu: {self.fit_time} seconds")
-        print()
-        print("6. Wynik Custom Score:")
-        print(f"   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła: {self.best_score}")
-        # Plot Confusion Matrix
-        plot_confusion_matrix(self.metrics['confusion_matrix'])
-        # Plot ROC AUC Curve
-        plot_roc_auc_curve(self.metrics['roc_curve'][0], self.metrics['roc_curve'][1], self.metrics['roc_auc'])
-        # Plot Bar Plot of Metrics
-        plot_metrics_bar(self.metrics, self.best_score)
+        try:
+            print("4. Parametry finalnego modelu:")
+            return self.best_model
+        finally:
+            print()
+            print(f"5. Czas trenowania modelu: {self.fit_time} seconds")
+            print()
+            print("6. Wynik Custom Score:")
+            print(f"   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła: {self.best_score}")
+            # Plot Confusion Matrix
+            plot_confusion_matrix(self.metrics['confusion_matrix'])
+            # Plot ROC AUC Curve
+            plot_roc_auc_curve(self.metrics['roc_curve'][0], self.metrics['roc_curve'][1], self.metrics['roc_auc'])
+            # Plot Bar Plot of Metrics
+            plot_metrics_bar(self.metrics, self.best_score)
 
-        generate_model_analysis_from_metrics(self.metrics)
+            generate_model_analysis_from_metrics(self.metrics)
 
 
 # #Example usage
