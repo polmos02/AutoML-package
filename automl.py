@@ -1,8 +1,11 @@
 from sklearn.model_selection import train_test_split
 import time
 
+from testing.play_lightgbm import X_train
+
 from modul1 import prep
 from model_selection import model_selection, model_evaluation
+from automl_functions import *
 
 class AutoML:
 
@@ -43,7 +46,7 @@ class AutoML:
         return self.fit_time
 
     def fit(self, X, y):
-        TEST_SIZE = 0.2
+        TEST_SIZE = 0.1
         RANDOM_STATE = 10
 
         try:
@@ -85,32 +88,93 @@ class AutoML:
         # predict
         return self.best_model.predict(X_preprocessed)
 
+    # def predict_proba(self, X):
+    #
+    #         if not self.best_model:
+    #             raise Exception("Model is not trained yet. Call fit() before predict().")
+    #
+    #         # preprocess the input data
+    #         X_preprocessed = prep(X, mode='test', features=self.selected_features)
+    #
+    #         # predict
+    #         return self.best_model.predict_proba(X_preprocessed)
+
+
     def summary_report(self):
-        # TODO: Funkcja Poli
-        pass
+
+        if not self.best_model:
+            raise Exception("Model is not trained yet. Call fit() before summary_report().")
+
+        print("Pakiet AutoML dla grzybiarzy")
+        print("Analizowane są zbiory danych z podziałem na klasy 0 lub 1, gdzie 0 oznacza jadalny grzyb, a 1 trujący.")
+        print("Analiza danych:")
+        data_overview(self.X)
+        print("Balans klas:")
+        plot_mushroom_balance(self.y)
+        print("Preprocessing: TODO")
+        print("Ważność cech:")
+        summarize_selected_features(self.selected_features)
+
+        print("Analiza jakości modeli i konfiguracja finalnego komitetu:")
+        print("1. Miara oceny modeli:")
+        print("   Do analizy jakości modeli wykorzystano kombinację ważonych miar ROC AUC oraz Recall:")
+        print("   Custom Score = (Recall: 0.3, ROC AUC: 0.7)")
+        print()
+        print(
+            "2. Modele użyte w analizie: KNeighborsClassifier, GradientBoostingClassifier, RandomForestClassifier, LogisticRegression")
+        print()
+        print("3. Optymalizacja parametrów:")
+        print(
+            "   Dla każdego z modeli, przy użyciu metody RandomizedSearch, dobrano najlepsze zestawy hiperparametrów.")
+        print()
+        print("4. Finalny komitet modeli:")
+        print(
+            "   Modele z optymalnymi parametrami zostały połączone w komitet VotingClassifier, reprezentujący finalny model.")
+        print()
+        print("5. Parametry finalnego modelu:")
+        print(self.best_model)
+        print()
+        print("6. Wynik Custom Score:")
+        print("   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła:")
+        print(self.best_score)
+        # Plot Confusion Matrix
+        plot_confusion_matrix(self.metrics['confusion_matrix'])
+        # Plot ROC AUC Curve
+        plot_roc_auc_curve(self.metrics['roc_curve'][0], self.metrics['roc_curve'][1], self.metrics['roc_auc'])
+        # Plot Bar Plot of Metrics
+        plot_metrics_bar(self.metrics, self.best_score)
+
+        generate_model_analysis_from_metrics(self.metrics)
+
+        print("Fit time")
+        print(self.fit_time)
 
 
-# Example usage
-# if __name__ == "__main__":
-#
-#     automl = AutoML()
-#     import pandas as pd
-#     from sklearn.datasets import load_breast_cancer
-#     data = load_breast_cancer()
-#     X = pd.DataFrame(data.data, columns=data.feature_names)
-#     y = pd.Series(data.target, name="target")
-#
-#     automl.fit(X, y)
-#
-#     y_pred = automl.predict(X)
-#     print(f"Predictions: {y_pred}")
-#
-#     metrics = automl.get_metrics()
-#     print(f"Metrics: {metrics}")
-#
-#     fit_time = automl.get_fit_time()
-#     print(f"Fit time: {fit_time} seconds")
-#
-#     print(automl.get_best_model())
-#     print(automl.get_best_score())
+#Example usage
+if __name__ == "__main__":
+
+    automl = AutoML()
+    import pandas as pd
+    from sklearn.datasets import load_breast_cancer
+    data = load_breast_cancer()
+    X = pd.DataFrame(data.data, columns=data.feature_names)
+    y = pd.Series(data.target, name="target")
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    automl.fit(X_train, y_train)
+
+    # y_pred = automl.predict(X)
+    # print(f"Predictions: {y_pred}")
+    #
+    # metrics = automl.get_metrics()
+    # print(f"Metrics: {metrics}")
+    #
+    # fit_time = automl.get_fit_time()
+    # print(f"Fit time: {fit_time} seconds")
+    #
+    # print(automl.get_best_model())
+    # print(automl.get_best_score())
+
+    print(automl.predict(X_test))
 

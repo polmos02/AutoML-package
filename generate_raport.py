@@ -2,6 +2,7 @@ from pakietAutoML.automl_functions import *
 from pakietAutoML.modul1 import *
 from pakietAutoML.model_selection import *
 from pakietAutoML.load_models import *
+
 def generate_raport(X_train, y_train, X_test, y_test, X_train_or, y_train_or):
     model,best_score =model_selection(X_train,y_train)
     y_pred=model.predict(X_test)

@@ -75,8 +75,8 @@ def custom_score(y_test, y_pred):
     return weighted_score
 
 def model_selection(X_train, y_train):
-    CV = 5
-    N_ITER = 5
+    CV = 3
+    N_ITER = 10
     RANDOM_STATE = 10
 
     best_model = None
