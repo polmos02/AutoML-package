@@ -110,6 +110,10 @@ class AutoML:
         print("Balans klas:")
         plot_mushroom_balance(self.y)
         print("Preprocessing: TODO")
+        print("Preprocessing składa się z kilku etapów:")
+        print("Numeryczne dane są wypełniane średnią w przypadku braków, a następnie skalowane do zakresu [0,1] przy użyciu MinMaxScaler.")
+        print("Dane kategoryczne są uzupełniane najczęściej występującymi wartościami, a następnie kodowane za pomocą metody one-hot encoding.")
+        print("W trybie treningowym wybierane są istotne cechy za pomocą klasyfikatora Random Forest i SelectFromModel, a dane testowe są ograniczane do wybranych cech.")
         print("Ważność cech:")
         summarize_selected_features(self.selected_features)
 
@@ -126,13 +130,15 @@ class AutoML:
             "   Dla każdego z modeli, przy użyciu metody RandomizedSearch, dobrano najlepsze zestawy hiperparametrów.")
         print()
         print("4. Finalny komitet modeli:")
-        print(
-            "   Modele z optymalnymi parametrami zostały połączone w komitet VotingClassifier, reprezentujący finalny model.")
+        print("   Modele z optymalnymi parametrami zostaną połączone w komitet VotingClassifier, jeśli poprawia to jakość predykcji")
         print()
         print("5. Parametry finalnego modelu:")
         print(self.best_model)
         print()
-        print("6. Wynik Custom Score:")
+        fit_time = automl.get_fit_time()
+        print(f"6. Czas trenowania modelu: {fit_time} seconds")
+        print()
+        print("7. Wynik Custom Score:")
         print("   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła:")
         print(self.best_score)
         # Plot Confusion Matrix
@@ -158,21 +164,19 @@ if __name__ == "__main__":
     X = pd.DataFrame(data.data, columns=data.feature_names)
     y = pd.Series(data.target, name="target")
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10)
 
     automl.fit(X_train, y_train)
 
-    # y_pred = automl.predict(X)
-    # print(f"Predictions: {y_pred}")
-    #
-    # metrics = automl.get_metrics()
-    # print(f"Metrics: {metrics}")
-    #
-    # fit_time = automl.get_fit_time()
-    # print(f"Fit time: {fit_time} seconds")
-    #
-    # print(automl.get_best_model())
-    # print(automl.get_best_score())
+    y_pred = automl.predict(X)
+    print(f"Predictions: {y_pred}")
+    
+    metrics = automl.get_metrics()
+    print(f"Metrics: {metrics}")
+    
+    
+    print(automl.get_best_model())
+    print(automl.get_best_score())
 
     print(automl.predict(X_test))
 
