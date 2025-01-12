@@ -12,59 +12,36 @@ class AutoMushroom:
     warnings.filterwarnings("ignore", category=FutureWarning)
 
     def __init__(self):
+
+        self.__selected_features = None
+        self.__X = None
+        self.__y = None
+        self.__fit_time = None
+        self.__voting = None
         self.best_model = None
         self.best_score = None
-        self.selected_features = None
-        self.X = None
-        self.y = None
         self.metrics = None
-        self.fit_time = None
 
-    def get_selected_features(self):
-        if not self.selected_features:
-            raise Exception("Model is not trained yet. Call fit() before get_selected_features().")
-        return self.selected_features
-
-    def get_best_model(self):
-        if not self.best_model:
-            raise Exception("Model is not trained yet. Call fit() before get_best_model().")
-        return self.best_model
-
-    def get_best_score(self):
-        if not self.best_score:
-            raise Exception("Model is not trained yet. Call fit() before get_best_score().")
-        return self.best_score
-
-    def get_metrics(self):
-        if not self.metrics:
-            raise Exception("Model is not trained yet. Call fit() before get_metrics().")
-
-        return self.metrics
-
-    def get_fit_time(self):
-        if not self.fit_time:
-            raise Exception("Model is not trained yet. Call fit() before get_fit_time().")
-
-        return self.fit_time
-
-    def fit(self, X, y, mode = 'medium'):
+    def fit(self, X, y, mode = 'medium', voting = 'hard'):
         TEST_SIZE = 0.1
         RANDOM_STATE = 10
+
+        self.__voting = voting
 
         try:
             start_time = time.time()
 
-            self.X = X
-            self.y = y
+            self.__X = X
+            self.__y = y
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
             # preprocesing
-            X_train_preprocessed, self.selected_features = prep(X_train, y_train, mode='train')
-            X_test_preprocessed = prep(X_test, mode='test', features=self.selected_features)
+            X_train_preprocessed, self.__selected_features = prep(X_train, y_train, mode='train')
+            X_test_preprocessed = prep(X_test, mode='test', features=self.__selected_features)
 
             # model selection
-            self.best_model, self.best_score = model_selection(X_train_preprocessed, y_train, mode = mode)
+            self.best_model, self.best_score = model_selection(X_train_preprocessed, y_train, mode = mode, voting = voting)
             if self.best_model is None:
                 raise ValueError("Model selection failed. No model was returned.")
 
@@ -72,7 +49,7 @@ class AutoMushroom:
             y_pred = self.best_model.predict(X_test_preprocessed)
             self.metrics = model_evaluation(y_test, y_pred)
 
-            self.fit_time = time.time() - start_time
+            self.__fit_time = time.time() - start_time
 
 
         except Exception as e:
@@ -84,22 +61,28 @@ class AutoMushroom:
         if not self.best_model:
             raise Exception("Model is not trained yet. Call fit() before predict().")
 
+        if self.__voting == 'soft' and isinstance(self.best_model, VotingClassifier):
+            raise Exception("Hard predictions are not supported with soft voting.")
+
         # preprocess the input data
-        X_preprocessed = prep(X, mode='test', features=self.selected_features)
+        X_preprocessed = prep(X, mode='test', features=self.__selected_features)
 
         # predict
         return self.best_model.predict(X_preprocessed)
 
-    # def predict_proba(self, X):
-    #
-    #         if not self.best_model:
-    #             raise Exception("Model is not trained yet. Call fit() before predict().")
-    #
-    #         # preprocess the input data
-    #         X_preprocessed = prep(X, mode='test', features=self.selected_features)
-    #
-    #         # predict
-    #         return self.best_model.predict_proba(X_preprocessed)
+    def predict_proba(self, X):
+
+            if not self.best_model:
+                raise Exception("Model is not trained yet. Call fit() before predict().")
+
+            if self.__voting == 'hard' and isinstance(self.best_model, VotingClassifier):
+                raise Exception("Predicting probabilities is not supported with hard voting.")
+
+            # preprocess the input data
+            X_preprocessed = prep(X, mode='test', features=self.__selected_features)
+
+            # predict
+            return self.best_model.predict_proba(X_preprocessed)
 
 
     def summary_report(self):
@@ -107,18 +90,18 @@ class AutoMushroom:
         if not self.best_model:
             raise Exception("Model is not trained yet. Call fit() before summary_report().")
 
-        print("Pakiet AutoML dla grzybiarzy")
+        print("Pakiet AutoMushroom dla grzybiarzy")
         print("Analizowane są zbiory danych z podziałem na klasy 0 lub 1, gdzie 0 oznacza jadalny grzyb, a 1 trujący.")
         print("Analiza danych:")
-        data_overview(self.X)
+        data_overview(self.__X)
         print("Balans klas:")
-        plot_mushroom_balance(self.y)
+        plot_mushroom_balance(self.__y)
         print("Preprocessing składa się z kilku etapów:")
         print("Numeryczne dane są wypełniane średnią w przypadku braków, a następnie skalowane do zakresu [0,1] przy użyciu MinMaxScaler.")
         print("Dane kategoryczne są uzupełniane najczęściej występującymi wartościami, a następnie kodowane za pomocą metody one-hot encoding.")
         print("W trybie treningowym wybierane są istotne cechy za pomocą klasyfikatora Random Forest i SelectFromModel, a dane testowe są ograniczane do wybranych cech.")
         print("Ważność cech:")
-        summarize_selected_features(self.selected_features)
+        summarize_selected_features(self.__selected_features)
 
         print("Analiza jakości modeli i konfiguracja finalnego komitetu:")
         print("1. Miara oceny modeli:")
@@ -137,7 +120,7 @@ class AutoMushroom:
         print("4. Parametry finalnego modelu:")
         print(self.best_model)
         print()
-        print(f"5. Czas trenowania modelu: {self.fit_time} seconds")
+        print(f"5. Czas trenowania modelu: {self.__fit_time} seconds")
         print()
         print("6. Wynik Custom Score:")
         print(f"   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła: {self.best_score}")
@@ -149,31 +132,4 @@ class AutoMushroom:
         plot_metrics_bar(self.metrics, self.best_score)
 
         generate_model_analysis_from_metrics(self.metrics)
-
-
-# #Example usage
-if __name__ == "__main__":
-
-    automl = AutoMushroom()
-    import pandas as pd
-    from sklearn.datasets import load_breast_cancer
-    data = load_breast_cancer()
-    X = pd.DataFrame(data.data, columns=data.feature_names)
-    y = pd.Series(data.target, name="target")
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10)
-
-    automl.fit(X_train, y_train)
-
-    y_pred = automl.predict(X)
-    print(f"Predictions: {y_pred}")
-    
-    metrics = automl.get_metrics()
-    print(f"Metrics: {metrics}")
-    
-    
-    print(automl.get_best_model())
-    print(automl.get_best_score())
-
-    print(automl.predict(X_test))
 

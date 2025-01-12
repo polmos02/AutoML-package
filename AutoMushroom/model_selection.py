@@ -74,7 +74,7 @@ def custom_score(y_test, y_pred):
 
     return weighted_score
 
-def model_selection(X_train, y_train, mode = 'fast'):
+def model_selection(X_train, y_train, mode = 'fast', voting = 'hard'):
     CV = 3
     RANDOM_STATE = 10
 
@@ -122,7 +122,7 @@ def model_selection(X_train, y_train, mode = 'fast'):
 
         models_list.append((model_info['model'].__name__, rs_best_model))
 
-    ensemble_model = VotingClassifier(estimators=models_list, voting='hard', n_jobs=-1)
+    ensemble_model = VotingClassifier(estimators=models_list, voting=voting, n_jobs=-1)
     ensemble_model.fit(X_train, y_train)
 
     y_pred_ens = ensemble_model.predict(X_train)
