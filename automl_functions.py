@@ -52,11 +52,11 @@ def plot_confusion_matrix(confusion):
 
 def plot_roc_auc_curve(fpr, tpr, roc_auc):
     plt.figure(figsize=(8, 6))
-    plt.plot(fpr, tpr, color='#8B4513', label=f'ROC Curve (AUC = {roc_auc:.2f})')  
+    plt.plot(fpr, tpr, color='#8B4513', label=f'Krzywa ROC (AUC = {roc_auc:.2f})')  
     plt.plot([0, 1], [0, 1], linestyle='--', color='#D2B48C') 
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('ROC AUC Curve')
+    plt.title('ROC AUC Krzywa')
     plt.legend()
     plt.show()
 
@@ -67,10 +67,10 @@ def plot_metrics_bar(metrics,weighted_score):
     values.append(weighted_score)
     metric_names.append('weighted_score')
 
-    colors = ['#D2B48C', '#D2B48C', '#D2B48C', '#D2B48C', '#800000']  # Beżowy dla pierwszych, bordowy dla weighted_score
-
+    colors = ['#D2B48C', '#D2B48C', '#D2B48C', '#D2B48C', '#8B4513']  
+    metric_names_2=['Dokładność', 'Precyzja', 'Czułość', 'F1', 'custome_score']
     plt.figure(figsize=(10, 6))
-    sns.barplot(x=metric_names, y=values, palette=colors)
+    sns.barplot(x=metric_names_2, y=values, palette=colors)
     plt.xlabel('metryki')
     plt.ylabel('wyniki')
     plt.title('Metryki modelu')
@@ -178,43 +178,43 @@ def plot_mushroom_balance(y_train):
     total = sum(class_counts)
     proportions = class_counts / total
     labels=["jadalny","trujący"]
-    # Rysowanie muchomora
+
     fig, ax = plt.subplots(figsize=(8, 8))
     
     # Rysowanie "kapelusza" z podziałem na klasy
-    r = 1  # Stały promień
+    r = 1  
     cap_start = 0
-    colors = ['#8B4513', '#D2B48C']  # Brązowy i beżowy
+    colors = ['#8B4513', '#D2B48C']
     for i, proportion in enumerate(proportions):
-        cap_end = cap_start + proportion * np.pi  # Proporcja klasy na kapeluszu
+        cap_end = cap_start + proportion * np.pi  
         theta_segment = np.linspace(cap_start, cap_end, 100)
-        x_segment = np.concatenate(([0], r * np.cos(theta_segment), [0]))  # Zawiera środek
-        y_segment = np.concatenate(([0], r * np.sin(theta_segment), [0]))  # Zawiera środek
+        x_segment = np.concatenate(([0], r * np.cos(theta_segment), [0]))  
+        y_segment = np.concatenate(([0], r * np.sin(theta_segment), [0]))  
         ax.fill(x_segment, y_segment, color=colors[i], label=f'{labels[i]}: {proportion:.1%}')
         
-        # Dodanie tekstu z procentami na kapeluszu
+
         mid_angle = (cap_start + cap_end) / 2
         x_text = 1.1 * np.cos(mid_angle)
         y_text = 1.1 * np.sin(mid_angle)
         ax.text(x_text, y_text, f"{proportion:.1%}", ha='center', va='center', fontsize=12, color='black')
         
-        # Dodanie linii podziału (wychodzącej ze środka)
+ 
         ax.plot([0, np.cos(cap_end)], [0, np.sin(cap_end)], color='black', linestyle='-', linewidth=1.5)
         
-        cap_start = cap_end  # Przesunięcie na kolejną klasę
+        cap_start = cap_end  
     
-    # Rysowanie "trzonu" przylegającego do kapelusza
-    stem_top = -0.02  # Górna granica trzonu (przylega do kapelusza)
-    stem_bottom = -0.3  # Dolna granica trzonu (krótszy)
-    x_stem = [-0.1, 0.1, 0.1, -0.1]  # Prostokąt trzonu
+  
+    stem_top = -0.02 
+    stem_bottom = -0.3  
+    x_stem = [-0.1, 0.1, 0.1, -0.1] 
     y_stem = [stem_top, stem_top, stem_bottom, stem_bottom]
     ax.fill_betweenx(y_stem, x_stem[0], x_stem[1], color='white', edgecolor='black')
     
-    # Ustawienia wykresu
+
     ax.axis('equal')
     ax.axis('off')
-    ax.set_ylim(-0.35, 1.1)  # Ograniczenie tła do zaraz pod trzonem
-    plt.legend(loc='upper right', fontsize=10, frameon=False)  # Usunięcie ramki legendy
+    ax.set_ylim(-0.35, 1.1)  
+    plt.legend(loc='upper right', fontsize=10, frameon=False)  
     plt.title('Zbalansowanie danych')
     plt.show()
 
