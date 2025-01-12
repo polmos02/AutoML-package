@@ -22,17 +22,18 @@
             "module": "sklearn.ensemble",
             "params": {
                 "n_estimators": {"type": "randint", "low": 1, "high": 2000},
-                "max_features": [null, 10, 20, 30],
-                "min_samples_split": [2, 5, 10]
+                "max_features": [null, 10, 20, "sqrt", "log2"],
+                "max_depth": {"type": "randint", "low": 4, "high": 10}
             }
         },
         {
             "name": "LogisticRegression",
             "module": "sklearn.linear_model",
             "params": {
-                "C": [0.1, 1, 10],
-                "solver": ["liblinear", "lbfgs"],
-                "max_iter": [100, 200, 300]
+                "C": {"type": "uniform", "low": 0.0001, "high": 10000},
+                "penalty": ["l1", "l2"],
+                "solver": ["liblinear"],
+                "max_iter": [3000]
             }
         }
     ]

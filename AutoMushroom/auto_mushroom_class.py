@@ -1,11 +1,15 @@
 from sklearn.model_selection import train_test_split
 import time
 
-from modul1 import prep
-from model_selection import model_selection, model_evaluation
-from automl_functions import *
+from AutoMushroom.preprocessing import prep
+from AutoMushroom.model_selection import *
+from AutoMushroom.report import *
 
-class AutoML:
+import warnings
+
+
+class AutoMushroom:
+    warnings.filterwarnings("ignore", category=FutureWarning)
 
     def __init__(self):
         self.best_model = None
@@ -43,7 +47,7 @@ class AutoML:
 
         return self.fit_time
 
-    def fit(self, X, y):
+    def fit(self, X, y, mode = 'medium'):
         TEST_SIZE = 0.1
         RANDOM_STATE = 10
 
@@ -60,7 +64,7 @@ class AutoML:
             X_test_preprocessed = prep(X_test, mode='test', features=self.selected_features)
 
             # model selection
-            self.best_model, self.best_score = model_selection(X_train_preprocessed, y_train)
+            self.best_model, self.best_score = model_selection(X_train_preprocessed, y_train, mode = mode)
             if self.best_model is None:
                 raise ValueError("Model selection failed. No model was returned.")
 
@@ -109,7 +113,6 @@ class AutoML:
         data_overview(self.X)
         print("Balans klas:")
         plot_mushroom_balance(self.y)
-        print("Preprocessing: TODO")
         print("Preprocessing składa się z kilku etapów:")
         print("Numeryczne dane są wypełniane średnią w przypadku braków, a następnie skalowane do zakresu [0,1] przy użyciu MinMaxScaler.")
         print("Dane kategoryczne są uzupełniane najczęściej występującymi wartościami, a następnie kodowane za pomocą metody one-hot encoding.")
@@ -124,23 +127,20 @@ class AutoML:
         print()
         print(
             "2. Modele użyte w analizie: KNeighborsClassifier, GradientBoostingClassifier, RandomForestClassifier, LogisticRegression")
+        print(
+            "   Dodatkowo komitet VotingClassifier z wyżej wymienionych modeli z optymalnymi parametrami")
         print()
         print("3. Optymalizacja parametrów:")
         print(
             "   Dla każdego z modeli, przy użyciu metody RandomizedSearch, dobrano najlepsze zestawy hiperparametrów.")
         print()
-        print("4. Finalny komitet modeli:")
-        print("   Modele z optymalnymi parametrami zostaną połączone w komitet VotingClassifier, jeśli poprawia to jakość predykcji")
+        print("4. Parametry finalnego modelu:")
+        return self.best_model
         print()
-        print("5. Parametry finalnego modelu:")
-        print(self.best_model)
+        print(f"5. Czas trenowania modelu: {self.fit_time} seconds")
         print()
-        fit_time = automl.get_fit_time()
-        print(f"6. Czas trenowania modelu: {fit_time} seconds")
-        print()
-        print("7. Wynik Custom Score:")
-        print("   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła:")
-        print(self.best_score)
+        print("6. Wynik Custom Score:")
+        print(f"   Uzyskana wartość Custom Score dla tego modelu na zbiorze walidacyjnym wynosiła: {self.best_score}")
         # Plot Confusion Matrix
         plot_confusion_matrix(self.metrics['confusion_matrix'])
         # Plot ROC AUC Curve
@@ -149,9 +149,6 @@ class AutoML:
         plot_metrics_bar(self.metrics, self.best_score)
 
         generate_model_analysis_from_metrics(self.metrics)
-
-        print("Fit time")
-        print(self.fit_time)
 
 
 # #Example usage

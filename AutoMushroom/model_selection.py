@@ -21,7 +21,7 @@ def parse_params(param_dict):
 
 def load_models():
     # load models from JSON file
-    with open('models.json', 'r') as file:
+    with open('AutoMushroom/models.json', 'r') as file:
         models_json = json.load(file)
 
     # create dictionary with models and parameters
@@ -74,10 +74,16 @@ def custom_score(y_test, y_pred):
 
     return weighted_score
 
-def model_selection(X_train, y_train):
+def model_selection(X_train, y_train, mode = 'fast'):
     CV = 3
-    N_ITER = 10
     RANDOM_STATE = 10
+
+    if mode == 'slow':
+        N_ITER = 50
+    elif mode == 'medium':
+        N_ITER = 30
+    else:
+        N_ITER = 10
 
     best_model = None
     best_score = 0
