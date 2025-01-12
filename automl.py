@@ -1,8 +1,6 @@
 from sklearn.model_selection import train_test_split
 import time
 
-from testing.play_lightgbm import X_train
-
 from modul1 import prep
 from model_selection import model_selection, model_evaluation
 from automl_functions import *
@@ -150,7 +148,7 @@ class AutoML:
         print(self.fit_time)
 
 
-#Example usage
+# #Example usage
 if __name__ == "__main__":
 
     automl = AutoML()
