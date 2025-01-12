@@ -68,13 +68,13 @@ def plot_metrics_bar(metrics,weighted_score):
     metric_names.append('weighted_score')
 
     colors = ['#D2B48C', '#D2B48C', '#D2B48C', '#D2B48C', '#8B4513']  
-    metric_names_2=['Dokładność', 'Precyzja', 'Czułość', 'F1', 'custome_score']
+    metric_names_2=['Dokładność', 'Precyzja', 'Czułość', 'F1', 'Custom score']
     plt.figure(figsize=(10, 6))
     sns.barplot(x=metric_names_2, y=values, palette=colors)
     plt.xlabel('metryki')
     plt.ylabel('wyniki')
     plt.title('Metryki modelu')
-    plt.ylim(0, 1)
+    plt.ylim(0, 1.1)
     for i, v in enumerate(values):
         plt.text(i, v + 0.02, f'{v:.2f}', ha='center', fontsize=10)
     plt.show()
