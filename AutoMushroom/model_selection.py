@@ -6,6 +6,7 @@ from sklearn.ensemble import VotingClassifier
 from scipy.stats import randint, uniform
 import json
 import importlib
+import importlib.resources
 
 def parse_params(param_dict):
     parsed_params = {}
@@ -21,7 +22,7 @@ def parse_params(param_dict):
 
 def load_models():
     # load models from JSON file
-    with open('AutoMushroom/models.json', 'r') as file:
+    with importlib.resources.open_text('AutoMushroom', 'models.json') as file:
         models_json = json.load(file)
 
     # create dictionary with models and parameters
