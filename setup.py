@@ -16,5 +16,6 @@ setup(
         "scikit-learn>=1.5.1",
         "seaborn>=0.13.2",
         "matplotlib>=3.9.2",
+        "scikit-optimize>=0.10.2"
     ]
 )
