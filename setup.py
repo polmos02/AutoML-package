@@ -11,6 +11,8 @@ setup(
     ],
     python_requires='>=3.11',
     packages=find_packages(),
+    include_package_data=True,
+    package_data={"AutoMushroom": ["models.json"]},
     install_requires=[
         "pandas>=2.2.2",
         "scikit-learn>=1.5.1",
