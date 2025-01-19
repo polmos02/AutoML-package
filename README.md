@@ -40,13 +40,10 @@ AutoML will ensemble available models
 -  model comparison miay - opcjonalne
 + Wnioski z accuracy, sensivity, recall I precission połączone ze zbalansowaniem zbioru np
 
-# Datasets 1,2,4
+# Datasets
 https://www.kaggle.com/datasets/prishasawhney/mushroom-dataset
 https://www.kaggle.com/datasets/devzohaib/mushroom-edibility-classification
-https://www.kaggle.com/datasets/ulrikthygepedersen/mushroom-attributes
 https://www.kaggle.com/datasets/uciml/mushroom-classification
-https://www.kaggle.com/datasets/bwandowando/mushroom-overload
-https://www.kaggle.com/datasets/vishalpnaik/mushroom-classification-edible-or-poisonous
 
 # Other implementations:
 https://github.com/awesomecosmos/Mushroom-Classification
