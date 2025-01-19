@@ -4,13 +4,13 @@ RANDOM STATE = 10
 Klasyfkacja binarna
 
 1. Preprocessing:
-- Encoding (dla y też)
-- Imputer (NAs)
+- Encoding
+- Imputer
 - Scaling
-- Feature selection - Golden features??
+- Feature selection
 
 2. Selekcja i optymalizacja modeli:
-- Random search?
+- Random search
 - Można zakresy parametrów z tunability paper
 - Kilka modeli + ensemble - stacking/voting (z wszystkich lub z kilku najlepszych)
 - Dla niezbalansowanych danych w train test split jakiś StratifiedKfold czy coś - sprawdzić
