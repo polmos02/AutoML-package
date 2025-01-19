@@ -1,20 +1,9 @@
 import pandas as pd
 import numpy as np
-from skopt.space import Real, Integer
-from sklearn.model_selection import train_test_split
-
-from sklearn.ensemble import RandomForestClassifier,  GradientBoostingClassifier
-
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
-from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_selection import SelectFromModel
-from sklearn.neighbors import KNeighborsClassifier
-
-from sklearn.metrics import accuracy_score, recall_score, precision_score, roc_auc_score
-from scipy.stats import uniform, randint
-import random
-
 
 def numerical_preprocess(data):
     num_columns = data.select_dtypes(include=['float64', 'int64']).columns
@@ -44,9 +33,9 @@ def categorical_preprocess(data):
 
 
 def feature_select(data, target):
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = RandomForestClassifier(n_estimators=100, random_state=10)
     model.fit(data, target)
-    selector = SelectFromModel(model, threshold="mean")  # Można także ustawić próg np. 0.01, lub "mean"
+    selector = SelectFromModel(model, threshold="mean") 
     data_selected = selector.transform(data)
     selected_features = data.columns[selector.get_support()]
     data_selected = pd.DataFrame(data_selected, columns=selected_features)
